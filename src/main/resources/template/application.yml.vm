@@ -1,0 +1,17 @@
+##Tomcat
+server:
+    tomcat:
+        max-threads: 10
+        min-spare-threads: 10
+    port: #生成项目的端口号
+
+##mysql
+spring:
+    datasource:
+        driverClassName: com.mysql.jdbc.Driver
+        url: ${jdbcurl} #生成项目的jdbc连接
+        username: ${username}
+        password: ${password}
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss

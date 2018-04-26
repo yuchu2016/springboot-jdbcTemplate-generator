@@ -12,9 +12,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -28,8 +26,9 @@ import java.util.zip.ZipOutputStream;
  */
 public class GenUtils {
 
+    //Crud模板
     public static List<String> getTemplates(){
-        List<String> templates = new ArrayList<String>();
+        List<String> templates = new ArrayList<>();
         templates.add("template/Entity.java.vm");
         templates.add("template/Service.java.vm");
         templates.add("template/Controller.java.vm");
@@ -37,9 +36,56 @@ public class GenUtils {
         templates.add("template/DaoImpl.java.vm");
         return templates;
     }
+    // Util模板
+    public static List<String> getUtilTemplates(){
+        List<String> templates = new ArrayList<>();
+        templates.add("template/swaggerConfig.java.vm");
+        templates.add("template/application.yml.vm");
+        return templates;
+    }
+    // 生成基础类和配置文件
+    public static void generatorUtil(ZipOutputStream zip){
+        Configuration config = getConfig();
+        //设置velocity资源加载器
+        Properties prop = new Properties();
+        prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader" );
+        Velocity.init(prop);
+        String mainPath = config.getString("mainPath" );
+        mainPath = StringUtils.isBlank(mainPath) ? "com.octopus" : mainPath;
+        //封装模板数据
+        Map<String, Object> map = new HashMap<>();
+        map.put("mainPath", mainPath);
+        map.put("package", config.getString("package" ));
+        map.put("moduleName", config.getString("moduleName" ));
+        map.put("author", config.getString("author" ));
+        map.put("email", config.getString("email" ));
+        map.put("datetime", DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
+        map.put("jdbcurl",config.getString("jdbcurl"));
+        map.put("username",config.getString("username"));
+        map.put("password",config.getString("password"));
+        VelocityContext context = new VelocityContext(map);
 
+        //获取模板列表
+        List<String> templates = getUtilTemplates();
+        for (String template : templates) {
+            //渲染模板
+            StringWriter sw = new StringWriter();
+            Template tpl = Velocity.getTemplate(template, "UTF-8" );
+            tpl.merge(context, sw);
+
+            try {
+                //添加到zip
+                zip.putNextEntry(new ZipEntry(getFileName(template, "swagger", config.getString("package" ), config.getString("moduleName" ))));
+                IOUtils.write(sw.toString(), zip, "UTF-8" );
+                IOUtils.closeQuietly(sw);
+                zip.closeEntry();
+            } catch (IOException e) {
+                throw new RRException("渲染模板失败，模板名："+template, e);
+            }
+        }
+    }
     /**
-     * 生成代码
+     * 生成crud代码
      */
     public static void generatorCode(Map<String, String> table,
                                      List<Map<String, String>> columns, ZipOutputStream zip) {
@@ -161,12 +207,12 @@ public class GenUtils {
             throw new RRException("获取配置文件失败，", e);
         }
     }
-
     /**
      * 获取文件名
      */
     public static String getFileName(String template, String className, String packageName, String moduleName) {
         String packagePath = "main" + File.separator + "java" + File.separator;
+        String resourcePath = "main" + File.separator + "resource" + File.separator;
         if (StringUtils.isNotBlank(packageName)) {
             packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
         }
@@ -187,6 +233,15 @@ public class GenUtils {
         }
         if (template.contains("DaoImpl.java.vm" )) {
             return packagePath + "dao" + File.separator +"Impl"+File.separator+ className + "DaoImpl.java";
+        }
+        if (template.contains("swaggerConfig.java.vm" )) {
+            return packagePath + "config" + File.separator + className + "Config.java";
+        }
+        if (template.contains("swaggerConfig.java.vm" )) {
+            return packagePath + "config" + File.separator + "swaggerConfig.java";
+        }
+        if (template.contains("application.yml.vm" )) {
+            return resourcePath+"application.yml";
         }
         return null;
     }

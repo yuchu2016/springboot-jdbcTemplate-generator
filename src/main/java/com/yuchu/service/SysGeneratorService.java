@@ -39,7 +39,7 @@ public class SysGeneratorService {
 	public byte[] generatorCode(String[] tableNames) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		ZipOutputStream zip = new ZipOutputStream(outputStream);
-
+		GenUtils.generatorUtil(zip);
 		for(String tableName : tableNames){
 			//查询表信息
 			Map<String, String> table = queryTable(tableName);
