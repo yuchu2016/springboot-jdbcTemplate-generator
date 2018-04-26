@@ -212,7 +212,7 @@ public class GenUtils {
      */
     public static String getFileName(String template, String className, String packageName, String moduleName) {
         String packagePath = "main" + File.separator + "java" + File.separator;
-        String resourcePath = "main" + File.separator + "resource" + File.separator;
+        String resourcePath = "main" + File.separator + "resources" + File.separator;
         if (StringUtils.isNotBlank(packageName)) {
             packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
         }
@@ -233,9 +233,6 @@ public class GenUtils {
         }
         if (template.contains("DaoImpl.java.vm" )) {
             return packagePath + "dao" + File.separator +"Impl"+File.separator+ className + "DaoImpl.java";
-        }
-        if (template.contains("swaggerConfig.java.vm" )) {
-            return packagePath + "config" + File.separator + className + "Config.java";
         }
         if (template.contains("swaggerConfig.java.vm" )) {
             return packagePath + "config" + File.separator + "swaggerConfig.java";
