@@ -1,0 +1,24 @@
+package ${package}.${moduleName}.dao;
+
+import ${package}.${moduleName}.entity.${className};
+import java.util.List;
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+
+public interface ${className}Dao{
+
+    ${className} findOne(${pk.attrType} ${pk.attrname});
+
+    List<${className}> findAll();
+
+    ${className} create(${className} ${classname});
+
+    void update(${className} ${classname});
+
+    boolean delete(${pk.attrType} ${pk.attrname});
+}

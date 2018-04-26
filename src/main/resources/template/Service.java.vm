@@ -1,0 +1,46 @@
+package ${package}.${moduleName}.service;
+
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.dao.${className}Dao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Service
+public class ${className}Service{
+    @Autowired
+    private ${className}Dao ${classname}Dao;
+
+    public void add${className}(${className} ${classname}){
+        ${classname}Dao.create(${classname});
+    }
+
+    public void update${className}(${className} ${classname}){
+            ${classname}Dao.update(${classname});
+    }
+
+    public void delete${className}(${pk.attrType} ${pk.attrname}){
+        ${classname}Dao.delete(${pk.attrname});
+    }
+
+    public ${className} getById( ${pk.attrType} ${pk.attrname}){
+       return ${classname}Dao.findOne(${pk.attrname});
+    }
+
+    public List<${className}> getAll(){
+       return ${classname}Dao.findAll();
+    }
+
+##    public Page<${className}> getPage(Integer pageNum,Integer pageSize){
+##        Pageable pageable = new PageRequest(pageNum,pageSize);
+##        return ${classname}Repository.findAll(pageable);
+##    }
+}
+

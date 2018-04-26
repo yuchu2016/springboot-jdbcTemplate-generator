@@ -1,0 +1,118 @@
+package ${package}.${moduleName}.dao.Impl;
+
+import ${package}.${moduleName}.entity.${className};
+import ${package}.${moduleName}.dao.${className}Dao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.*;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Repository
+public class ${className}DaoImpl implements ${className}Dao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    @Transactional(readOnly = true)
+    public ${className} findOne(${pk.attrType} ${pk.attrname}) {
+        return jdbcTemplate.queryForObject("select * from ${tableName} where ${pk.attrname}=?", new Object[]{${pk.attrname}}, new ${className}RowMapper());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<${className}> findAll() {
+        return jdbcTemplate.query("select * from ${tableName}", new ${className}RowMapper());
+    }
+
+    @Override
+    public ${className} create(${className} ${classname}) {
+        #if(${pk.attrType}=="String")
+            String ${pk.attrname} = UUID.randomUUID().toString().replaceAll("-", "");
+            user.set${pk.attrName}(${pk.attrname});
+            final String sql = "insert into ${tableName} values( #foreach($column in $columns)?  #if( $foreach.hasNext ), #end #end)";
+            jdbcTemplate.update(sql, new PreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps) throws SQLException {
+                    #foreach($column in $columns)
+                    ps.set#if(${column.attrType}=="Integer")Int#else${column.attrType}#end($foreach.count,${classname}.get${column.attrName}());
+                    #end
+                }
+            });
+            return ${classname};
+        #elseif(${pk.attrType}=="Integer")
+            final String sql = "insert into ${tableName}( #foreach($column in $columns)#if($column.columnName != $pk.columnName)$column.columnName  #if( $foreach.hasNext ), #end #end#end) values( #foreach($column in $columns) #if($column.columnName != $pk.columnName)?#if( $foreach.hasNext ), #end#end#end)";
+            KeyHolder holder = new GeneratedKeyHolder();
+            jdbcTemplate.update(new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection connection)
+                        throws SQLException {
+                    PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    #foreach($column in $columns)
+                    #if($foreach.index == 0)
+                    #else
+                    ps.set#if(${column.attrType}=="Integer")Int#else${column.attrType}#end($foreach.index,${classname}.get${column.attrName}());
+                    #end
+                    #end
+                    return ps;
+                }
+            },holder);
+            int newId = holder.getKey().intValue();
+            ${classname}.set${pk.attrName}(newId);
+            return ${classname};
+        #end
+    }
+
+    @Override
+    public void update(${className} ${classname}){
+        final String sql = "update ${tableName} set  #foreach($column in $columns)#if($column.columnName != $pk.columnName)$column.columnName=?#if( $foreach.hasNext ),#end#end#end where ${pk.columnName}=?";
+        jdbcTemplate.update(sql, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                #foreach($column in $columns)
+                    #if($foreach.index == 0)
+                        ps.set#if(${pk.attrType}=="Integer")Int#else${column.attrType}#end($columns.size(),${classname}.get${pk.attrName}());
+                    #else
+                        ps.set#if(${column.attrType}=="Integer")Int#else${column.attrType}#end($foreach.index,${classname}.get${column.attrName}());
+                    #end
+                #end
+            }
+        });
+    }
+    @Override
+    public boolean delete(${pk.attrType} ${pk.attrname}){
+        String sql = "delete from ${tableName}  where ${pk.columnName}=?";
+        Object[] params = new Object[]{${pk.attrname}};
+        int rowNum = jdbcTemplate.update(sql, params);
+        return rowNum > 0 ? true : false;
+    }
+}
+
+class ${className}RowMapper implements RowMapper<${className}> {
+
+    @Override
+    public ${className} mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ${className} ${classname} =new ${className}();
+        #foreach ($column in $columns)
+                ${classname}.set${column.attrName}(rs.get#if(${column.attrType}=="Integer")Int#else${column.attrType}#end("$column.attrname"));
+        #end
+        return ${classname};
+    }
+
+}
