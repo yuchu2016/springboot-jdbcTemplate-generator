@@ -1,5 +1,4 @@
 package ${package}.${moduleName}.dao.Impl;
-
 import ${package}.${moduleName}.entity.${className};
 import ${package}.${moduleName}.dao.${className}Dao;
 import ${package}.${moduleName}.common.Pagination;
