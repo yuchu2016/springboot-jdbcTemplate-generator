@@ -19,8 +19,8 @@ public class ${className}Service{
     @Autowired
     private ${className}Dao ${classname}Dao;
 
-    public void add${className}(${className} ${classname}){
-        ${classname}Dao.create(${classname});
+    public ${className} add${className}(${className} ${classname}){
+        return ${classname}Dao.create(${classname});
     }
 
     public void update${className}(${className} ${classname}){

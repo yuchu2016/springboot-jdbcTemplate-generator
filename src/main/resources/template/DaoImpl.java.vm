@@ -34,7 +34,11 @@ public class ${className}DaoImpl implements ${className}Dao {
     @Override
     @Transactional(readOnly = true)
     public ${className} findOne(${pk.attrType} ${pk.attrname}) {
-        return jdbcTemplate.queryForObject("select * from ${tableName} where ${pk.attrname}=?", new Object[]{${pk.attrname}}, new ${className}RowMapper());
+        try {
+            return jdbcTemplate.queryForObject("select * from ${tableName} where ${pk.attrname}=?", new Object[]{${pk.attrname}}, new ${className}RowMapper());
+        }catch (EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
     @Override

@@ -1,10 +1,17 @@
-package ${package}.${moduleName}.controller;
+package
+
+    ${package}.${moduleName}.controller;
 import ${package}.${moduleName}.common.Pagination;
+import ${package}.${moduleName}.common.Pagination;
+import ${package}.${moduleName}.common.ServerResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import java.util.List;
+
 import ${package}.${moduleName}.entity.${className};
 import ${package}.${moduleName}.service.${className}Service;
 
@@ -25,36 +32,64 @@ public class ${className}Controller {
 
     @ApiOperation(value = "获取所有${classname}")
     @GetMapping
-    public List<${className}> getAll(){
-        return ${classname}Service.getAll();
+    public ServerResponse<List<${className}>> getAll() {
+        try {
+            return ServerResponse.createBySuccess(${classname}Service.getAll());
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
 
     @ApiOperation(value = "分页获取user")
     @GetMapping("/page")
-    public Pagination<${className}> getPage(@RequestParam(name = "pageNum") Integer pageNum,@RequestParam(name = "pageSize")Integer pageSize){
-        return ${classname}Service.getPage(pageNum, pageSize);
+    public ServerResponse<Pagination<${className}>> getPage(@RequestParam(name = "pageNum") Integer pageNum, @RequestParam(name = "pageSize") Integer pageSize) {
+        try {
+            return ServerResponse.createBySuccess(${classname}Service.getPage(pageNum, pageSize));
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
 
     @ApiOperation(value = "更新${classname}")
     @PutMapping
-    public void update${className}(@RequestBody ${className} ${classname}){
-        ${classname}Service.update${className}(${classname});
+    public ServerResponse update${className}(@RequestBody ${className} ${classname}) {
+        try {
+                ${classname}Service.update${className}(${classname});
+            return ServerResponse.createBySuccess();
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
 
     @ApiOperation(value = "添加${classname}")
     @PostMapping
-    public void add${className}(@RequestBody ${className} ${classname}){
-        ${classname}Service.add${className}(${classname});
+    public ServerResponse<${className}> add${className}(@RequestBody ${className} ${classname}) {
+        try {
+            return ServerResponse.createBySuccess(${classname}Service.add${className}(${classname}));
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
+
     @ApiOperation(value = "根据${pk.attrname}获取${classname}")
     @GetMapping("/{${pk.attrname}}")
-    public ${className} get${className}(@PathVariable ${pk.attrType} ${pk.attrname}){
-        return ${classname}Service.getById(${pk.attrname});
+    public ServerResponse<${className}> get${className}(@PathVariable ${pk.attrType} ${pk.attrname}) {
+        try {
+            return ServerResponse.createBySuccess(${classname}Service.getById(${pk.attrname}));
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
+
     @ApiOperation(value = "根据${pk.attrname}删除${classname}")
     @DeleteMapping
-    public void delete${className}(@RequestParam(name = "${pk.attrname}") ${pk.attrType} ${pk.attrname}){
-        ${classname}Service.delete${className}(${pk.attrname});
+    public ServerResponse delete${className}(@RequestParam(name = "${pk.attrname}") ${pk.attrType} ${pk.attrname}) {
+        try {
+                ${classname}Service.delete${className}(${pk.attrname});
+            return ServerResponse.createBySuccess();
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("未知错误");
+        }
     }
 
 }
