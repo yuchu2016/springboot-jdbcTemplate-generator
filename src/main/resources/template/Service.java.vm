@@ -1,5 +1,6 @@
 package ${package}.${moduleName}.service;
-
+import ${package}.${moduleName}.common.Pagination;
+import ${package}.${moduleName}.common.PageRequest;
 import ${package}.${moduleName}.entity.${className};
 import ${package}.${moduleName}.dao.${className}Dao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class ${className}Service{
        return ${classname}Dao.findAll();
     }
 
-##    public Page<${className}> getPage(Integer pageNum,Integer pageSize){
-##        Pageable pageable = new PageRequest(pageNum,pageSize);
-##        return ${classname}Repository.findAll(pageable);
-##    }
+    public Pagination<${className}> getPage(Integer pageNum,Integer pageSize){
+        PageRequest pageRequest = new PageRequest(pageNum,pageSize);
+        return ${classname}Dao.getPage(pageRequest);
+    }
 }
 

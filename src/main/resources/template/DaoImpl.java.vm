@@ -2,6 +2,8 @@ package ${package}.${moduleName}.dao.Impl;
 
 import ${package}.${moduleName}.entity.${className};
 import ${package}.${moduleName}.dao.${className}Dao;
+import ${package}.${moduleName}.common.Pagination;
+import ${package}.${moduleName}.common.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -40,7 +42,11 @@ public class ${className}DaoImpl implements ${className}Dao {
     public List<${className}> findAll() {
         return jdbcTemplate.query("select * from ${tableName}", new ${className}RowMapper());
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public Pagination getPage(PageRequest pageRequest) {
+        return new Pagination("select * from ${tableName}",pageRequest,jdbcTemplate);
+    }
     @Override
     public ${className} create(${className} ${classname}) {
         #if(${pk.attrType}=="String")

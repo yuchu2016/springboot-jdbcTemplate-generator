@@ -1,5 +1,5 @@
 package ${package}.${moduleName}.controller;
-
+import ${package}.${moduleName}.common.Pagination;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,12 @@ public class ${className}Controller {
     public List<${className}> getAll(){
         return ${classname}Service.getAll();
     }
-##    @ApiOperation(value = "分页获取${classname}")
-##    @GetMapping("/page")
-##    public Page<${className}> getPage(@RequestParam(name = "pageNum") Integer pageNum,@RequestParam(name = "pageSize")Integer pageSize){
-##        return ${classname}Service.getPage(pageNum, pageSize);
-##    }
+
+    @ApiOperation(value = "分页获取user")
+    @GetMapping("/page")
+    public Pagination<${className}> getPage(@RequestParam(name = "pageNum") Integer pageNum,@RequestParam(name = "pageSize")Integer pageSize){
+        return ${classname}Service.getPage(pageNum, pageSize);
+    }
 
     @ApiOperation(value = "更新${classname}")
     @PutMapping

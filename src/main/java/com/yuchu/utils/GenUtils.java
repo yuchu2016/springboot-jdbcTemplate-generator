@@ -40,6 +40,8 @@ public class GenUtils {
     public static List<String> getUtilTemplates(){
         List<String> templates = new ArrayList<>();
         templates.add("template/swaggerConfig.java.vm");
+        templates.add("template/PageRequest.java.vm");
+        templates.add("template/Pagination.java.vm");
         templates.add("template/application.yml.vm");
         return templates;
     }
@@ -236,6 +238,12 @@ public class GenUtils {
         }
         if (template.contains("swaggerConfig.java.vm" )) {
             return packagePath + "config" + File.separator + "swaggerConfig.java";
+        }
+        if (template.contains("PageRequest.java.vm" )) {
+            return packagePath + "common" + File.separator + "PageRequest.java";
+        }
+        if (template.contains("Pagination.java.vm" )) {
+            return packagePath + "common" + File.separator + "Pagination.java";
         }
         if (template.contains("application.yml.vm" )) {
             return resourcePath+"application.yml";
