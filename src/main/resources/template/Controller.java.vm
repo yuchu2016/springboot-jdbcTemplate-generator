@@ -1,6 +1,4 @@
-package
-
-    ${package}.${moduleName}.controller;
+package ${package}.${moduleName}.controller;
 import ${package}.${moduleName}.common.Pagination;
 import ${package}.${moduleName}.common.Pagination;
 import ${package}.${moduleName}.common.ServerResponse;
